@@ -93,7 +93,7 @@ system.file(“extdata”, “ndvi.tif”, package = “LandslideSusceptibilityR
 # Predict landslide susceptibility
 
 predict_landslide_susceptibility( stack = stack, model_path =
-system.file(“extdata”, “global_rf_model_ranger.rds”, package =
+system.file(“”, “global_rf_model_ranger.rds”, package =
 “LandslideSusceptibilityR”), output_path = “susceptibility_map.tif” )
 
 # Plot result
