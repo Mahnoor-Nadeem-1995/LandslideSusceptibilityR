@@ -1,56 +1,102 @@
 LandslideSusceptibilityR
 ================
 
-<!-- README.md is generated from README.Rmd. Please edit that file -->
-
 # LandslideSusceptibilityR
 
 **LandslideSusceptibilityR** is an R package that allows users to
-generate landslide susceptibility maps with minimal input. The user only
-needs to provide a digital elevation model (DEM) and a satellite image
-stack for a given area. The package then automatically computes key
-causal factors such as slope and NDVI, and uses a pre-trained machine
-learning model to generate a susceptibility map.
+automatically generate **landslide susceptibility maps** from minimal
+inputs.
 
-This package is designed to make landslide modeling fast, consistent,
-and accessible using Earth observation data and spatial analysis in R.
+\*Note:\*\* Since the package downloads several global datasets (DEM,
+precipitation, fault lines), performance may vary depending on your
+computer’s RAM and internet speed.
 
-## Installation
+------------------------------------------------------------------------
 
-Install the development version of the package directly from GitHub
-using the `devtools` package:
+## About the Package
 
-``` r
-# If devtools is not already installed:
-# install.packages("devtools")
+This package uses a **globally trained Random Forest model** (based on
+the `ranger` package) to predict landslide susceptibility. The model was
+trained **outside the package** using:
 
-devtools::install_github("Mahnoor-Nadeem-1995/LandslideSusceptibilityR")
-```
+- **Presence data:** NASA’s **Global Landslide Catalog (GLC)**
+- **Absence data:** Generated globally using slope thresholds (\< 3° =
+  assumed stable).
 
-## Example
+The model uses the following **causal factors** for prediction: -
+Slope - Aspect - Elevation - Hillshade - Flow Accumulation - NDVI
+(Normalized Difference Vegetation Index) - Precipitation - Distance to
+fault lines (binary buffer)
 
-``` r
-library(LandslideSusceptibilityR)
-library(terra)
+The package automatically prepares these layers for your study area by
+downloading, clipping, buffering, calculating terrain metrics, and
+stacking them consistently.
 
-# Load example raster file paths
-slope <- system.file("extdata", "slope.tif", package = "LandslideSusceptibilityR")
-ndvi  <- system.file("extdata", "ndvi.tif",  package = "LandslideSusceptibilityR")
+------------------------------------------------------------------------
 
-# Prepare and normalize raster stack
-raster_stack <- prepare_factors(c(slope, ndvi))
+## Causal Factors Automatically Used
 
-# Plot the first raster layer
-plot(raster_stack[[1]], main = "Normalized Slope")
-```
+- **Topography:** Slope, Aspect, Elevation, Hillshade, Flow Accumulation
+- **Vegetation:** NDVI
+- **Hydrology:** Precipitation
+- **Geology:** Fault proximity (binary)
 
-<img src="man/figures/README-example-1.png" width="100%" />
+------------------------------------------------------------------------
+
+## How It Works
+
+- You provide **only two things**:
+  - a **study area shapefile** (.shp)
+  - a **user-supplied NDVI raster** (.tif)
+- The package:
+  1.  Downloads and clips DEM and precipitation.
+  2.  Downloads and clips global fault lines.
+  3.  Computes slope, aspect, flow accumulation, hillshade, etc.
+  4.  Aligns and stacks all causal factors correctly.
+  5.  Predicts landslide susceptibility using the **global Random Forest
+      model**.
+  6.  Outputs a **heatmap** raster of landslide susceptibility (0 = low,
+      1 = high).
+
+## Included Example Data
+
+- inst/extdata/study_area.shp: Small example shapefile
+- inst/extdata/ndvi.tif: Example NDVI raster
+- inst/extdata/global_rf_model_ranger.rds: Pre-trained model
 
 ## Notes
 
-- This README is generated from `README.Rmd` using
-  `devtools::build_readme()`.
-- Be sure to commit both `README.Rmd` and the generated `README.md` to
-  GitHub.
-- Make sure the raster files `slope.tif` and `ndvi.tif` are placed in
-  the `inst/extdata/` folder so this example runs properly.
+- Global Scale: The model is trained globally, so it can work for any
+  part of the world.
+- RAM Warning: Processing very large study areas may require high RAM
+  (\>16 GB recommended).
+- Pre-Trained Model: No local model training needed — everything works
+  automatically!
+
+------------------------------------------------------------------------
+
+## Example Usage
+
+\`\`\`r \# Install the package (if not installed already) \#
+install.packages(“devtools”)
+devtools::install_github(“Mahnoor-Nadeem-1995/LandslideSusceptibilityR”)
+
+library(LandslideSusceptibilityR) library(terra)
+
+# Prepare input stack
+
+stack \<- prepare_input_stack( shapefile_path = system.file(“extdata”,
+“study_area.shp”, package = “LandslideSusceptibilityR”), ndvi_path =
+system.file(“extdata”, “ndvi.tif”, package = “LandslideSusceptibilityR”)
+)
+
+# Predict landslide susceptibility
+
+predict_landslide_susceptibility( stack = stack, model_path =
+system.file(“extdata”, “global_rf_model_ranger.rds”, package =
+“LandslideSusceptibilityR”), output_path = “susceptibility_map.tif” )
+
+# Plot result
+
+susceptibility_map \<- rast(“susceptibility_map.tif”)
+plot(susceptibility_map)

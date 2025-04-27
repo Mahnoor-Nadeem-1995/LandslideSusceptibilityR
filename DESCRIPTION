@@ -1,13 +1,24 @@
 Package: LandslideSusceptibilityR
-Title: What the Package Does (One Line, Title Case)
-Version: 0.0.0.9000
+Title: Landslide Susceptibility Mapping with Global Random Forest Model
+Version: 0.1.0
 Authors@R: 
-    person("First", "Last", , "first.last@example.com", role = c("aut", "cre"))
-Description: What the package does (one paragraph).
-License: `use_mit_license()`, `use_gpl3_license()` or friends to pick a
-    license
+    person("Mahnoor", "Nadeem", email = "mahnoor.nadeem@stud-mail.uni-wuerzburg.de", role = c("aut", "cre"))
+Description: 
+    LandslideSusceptibilityR allows users to generate landslide susceptibility maps with minimal inputs. 
+    The package automatically downloads necessary Earth observation data (such as DEM, precipitation, fault lines),
+    computes key causal factors (slope, aspect, flow accumulation, hillshade, precipitation, NDVI, distance to fault lines),
+    and applies a globally trained Random Forest model (using the 'ranger' package) to predict landslide susceptibility. 
+    The user only needs to provide a study area shapefile and a corresponding NDVI raster. 
+    The pre-trained model was trained using NASA's Global Landslide Catalog (GLC) and absence points generated based on slope thresholds. 
+    The model is fully global and requires no manual training data input from the user.
+License: MIT
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.3.2
+Imports:
+    terra,
+    sf,
+    elevatr,
+    ranger
 URL: https://github.com/Mahnoor-Nadeem-1995/LandslideSusceptibilityR
 BugReports: https://github.com/Mahnoor-Nadeem-1995/LandslideSusceptibilityR/issues
