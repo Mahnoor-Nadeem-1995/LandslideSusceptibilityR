@@ -81,7 +81,10 @@ stacking them consistently.
 install.packages(“devtools”)
 devtools::install_github(“Mahnoor-Nadeem-1995/LandslideSusceptibilityR”)
 
-library(LandslideSusceptibilityR) library(terra)
+library(LandslideSusceptibilityR) 
+library(terra)
+
+options(timeout = 600)
 
 # Prepare input stack
 
