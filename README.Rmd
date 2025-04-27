@@ -76,6 +76,8 @@ devtools::install_github("Mahnoor-Nadeem-1995/LandslideSusceptibilityR")
 library(LandslideSusceptibilityR)
 library(terra)
 
+options(timeout = 600)
+
 # Prepare input stack
 stack <- prepare_input_stack(
   shapefile_path = system.file("extdata", "study_area.shp", package = "LandslideSusceptibilityR"),
