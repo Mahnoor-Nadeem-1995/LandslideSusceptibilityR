@@ -88,7 +88,7 @@ options(timeout = 600)
 
 # Prepare input stack
 
-stack \<- prepare_input_stack( shapefile_path = system.file(“extdata”,
+stack <- prepare_input_stack( shapefile_path = system.file(“extdata”,
 “study_area.shp”, package = “LandslideSusceptibilityR”), ndvi_path =
 system.file(“extdata”, “ndvi.tif”, package = “LandslideSusceptibilityR”)
 )
